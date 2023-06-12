@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>Sign-Up/Login Form</title>
+  <link href='https://fonts.googleapis.com/css?family=Titillium+Web:400,300,600' rel='stylesheet' type='text/css'>
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css"> -->
+
+  <link rel="stylesheet" href="css/normalize.css">
+
+  
+      <link rel="stylesheet" href="css/style.css">
+
+
+      <script type="text/javascript">
+   
+      // Form validation code will come here.
+      function validate()
+      {   
+         var flag_0=0;
+         var p=document.myForm.password.value;
+         
+
+         if(p.length < 6)
+           {
+            alert("password must contain more than 5 characters");
+            document.myForm.password.focus();
+            return false;
+          }
+         
+         else{
+          var flag_0=1;
+          return true;
+         }
+         
+         
+      }
+
+
+      
+   
+</script>
+
+</head>
+
+<body>
+
+
+  
+
+  <?php   
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname="login";
+    //Create connection
+    $conn = mysqli_connect($servername, $username, $password, $dbname);
+    $error = NULL; 
+    // Check connection
+    if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error()); }
+    //echo "Connected successfully";
+    // Create connection
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    // Check connection
+    if ($conn->connect_error) {
+      die("Connection failed: " . $conn->connect_error);
+    } 
+ if(isset($_POST['submit'])){
+        $name=$_POST["name"];
+        $email=$_POST["email"];
+        $password=$_POST["password"];
+        $phone=$_POST["phone"];
+        $sql="INSERT INTO users (name, email, password, phone) 
+              VALUES ('$name','$email','$password','$phone')";
+              
+        $result=mysqli_query($conn , $sql);
+         
+     }
+    if(isset($_POST['loginButton'])){
+      $flag_1=0;
+      if(!empty($_POST['email']) || !empty($_POST['password'])){
+          $eid=$_POST["email"];
+          $pid=htmlspecialchars($_POST["password"]);
+          $sql= "SELECT * FROM users WHERE email='$eid'";
+          $result = mysqli_query($conn , $sql);
+          if(mysqli_num_rows($result)>0){
+              $row = mysqli_fetch_assoc($result);
+              $email=$row["email"];
+              $password=$row["password"];
+              if($email==$eid && $password==$pid)
+                {echo "<br>Logged in!";
+                 $flag_1=1;
+                 //echo $flag_1;
+                 //$_SESSION['username'=$eid;
+                 /*
+                  if(isset($_SESSION['username'])){
+                      echo $username;
+                  }
+                  else{
+                
+                  }
+                 */
+
+                  header("Location:admin1.php");
+                }
+              else 
+                { //$error = "<h1>Invalid Credentials! Try Login Again</h1>";
+                  //echo $flag_1;
+                    echo "<script>invalid user id or password</script>";
+                } 
+          }
+          else{
+            $error = "<h1>Not an existing user! Please sign up!</h1>";
+              
+              //echo $flag_1;
+          }
+     }
+   }
+  $conn->close(); 
+?>
+
+
+  <div class="form">
+      
+     <!--  <ul class="tab-group">
+        <li class="tab"><a href="#login">Admin Login</a></li>
+      </ul>
+      
+      <div class="tab-content">
+        
+        <div id="login">  -->  
+          <h1>ADMIN LOGIN</h1>
+          
+          <form method="post" action="admin1.php">
+          
+            <div class="field-wrap">
+            <label>
+              Email Address<span class="req">*</span>
+            </label>
+            <input type="email"required autocomplete="off" name="email"/>
+          </div>
+          
+          <div class="field-wrap">
+            <label>
+              Password<span class="req">*</span>
+            </label>
+            <input type="password"required autocomplete="off" name="password"/>
+          </div>
+          
+          <!-- <p class="forgot"><a href="#">Forgot Password?</a></p> -->
+          
+          <button class="button button-block" name="loginButton" type="submit"/>Log In</button>
+          
+          </form>
+
+        </div>
+        
+      </div><!-- tab-content -->
+      
+</div> <!-- /form -->
+  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+
+    <script  src="js/index.js"></script>
+
+</body>
+</html>
